@@ -26,7 +26,9 @@ const generarJWT = (uid, name) => {
 
 }
 
-
+const validaJWT = async()=>{
+    
+}
 module.exports = {
     generarJWT,
 }
