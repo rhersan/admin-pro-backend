@@ -14,12 +14,12 @@ const {
     eliminarMedicos
 } = require('../controllers/medicos.controller');
 
-const route =  Router();
+const router =  Router();
 
 
-route.get('/',validarJWT, listadoMedicos);
+router.get('/',validarJWT, listadoMedicos);
 
-route.post('/',[
+router.post('/',[
         validarJWT,
         check('nombre','El nombre es obligatorio').not().notEmpty(),
         check('img', 'La imagen es obligatorio').not().notEmpty(),
@@ -27,7 +27,7 @@ route.post('/',[
         validarCampos
     ], crearMedicos);
 
-route.put('/:id',[
+router.put('/:id',[
         validarJWT,
         check('nombre','El nombre es obligatorio').not().notEmpty(),
         check('img', 'La imagen es obligatorio').not().notEmpty(),
@@ -37,6 +37,6 @@ route.put('/:id',[
 
 
     
-route.delete('/:id',validarJWT, eliminarMedicos);
+router.delete('/:id',validarJWT, eliminarMedicos);
 
-module.exports = route;
+module.exports = router;

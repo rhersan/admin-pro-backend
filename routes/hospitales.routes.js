@@ -10,11 +10,11 @@ const {validarJWT} = require('../middlewares/validar-jwt');
 const {listaHospitales, crearHospital, actualizarHospital, eliminarHospital} = require('../controllers/hospitales.controller');
 
 
-const route = Router();
+const router = Router();
 
 
-route.get('/',validarJWT,listaHospitales);
-route.post('/',[
+router.get('/',validarJWT,listaHospitales);
+router.post('/',[
         validarJWT,
         check('nombre','El nombre es obligatorio').not().notEmpty(),
         check('img', 'La imagen es obligatorio').not().notEmpty(),
@@ -22,7 +22,7 @@ route.post('/',[
     ],
     crearHospital );
 
-route.put('/:id',[
+router.put('/:id',[
         validarJWT,
         check('nombre','El nombre es obligatorio').not().notEmpty(),
         check('img', 'La imagen es obligatorio').not().notEmpty(),
@@ -30,7 +30,7 @@ route.put('/:id',[
     ],
     actualizarHospital );
 
-route.delete('/:id',validarJWT, eliminarHospital);
+router.delete('/:id',validarJWT, eliminarHospital);
 
 
-module.exports =   route;
+module.exports =   router;

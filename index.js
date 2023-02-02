@@ -7,6 +7,10 @@ const {dbConnection} = require('./database/config');
 // crear el servidor de express 
 const app = express(); 
 
+
+// Carpeta publica
+app.use(express.static('public'));
+
 // Configurar CORS
 app.use(cors());
 
@@ -17,9 +21,8 @@ app.use(express.json());
 dbConnection();
 
 // Rutas
-
 app.use('/api/usuarios', require('./routes/usuarios.routes'));
-app.use('/api/auth', require('./routes/auth.routes'));
+app.use('/api/login', require('./routes/auth.routes'));
 app.use('/api/hospitales', require('./routes/hospitales.routes'));
 app.use('/api/medicos', require('./routes/medicos.routes'));
 app.use('/api/todo', require('./routes/busqueda.routes'));

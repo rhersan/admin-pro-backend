@@ -5,13 +5,13 @@
 
 const {Router} = require('express');
 const {validarJWT} = require('../middlewares/validar-jwt');
-const route = Router();
+const router = Router();
 const {buscadorGlobal,buscadorPorColeccion} = require('../controllers/buscador.controller');
 
 
-route.get('/:busqueda',validarJWT, buscadorGlobal);
-route.get('/coleccion/:tabla/:busqueda',validarJWT,buscadorPorColeccion);
+router.get('/:busqueda',validarJWT, buscadorGlobal);
+router.get('/coleccion/:tabla/:busqueda',validarJWT,buscadorPorColeccion);
 
 
 
-module.exports = route;
+module.exports = router;

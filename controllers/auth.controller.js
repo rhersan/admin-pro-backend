@@ -1,8 +1,8 @@
-const { response, json } = require('express');
+const { response } = require('express');
 const bcrypt = require('bcryptjs');
-const Usuario = require('../models/usuario.model');
-const { model } = require('mongoose');
+const contextUsuario = require('../models/usuario.model');
 const {generarJWT} =  require('../helpers/jwt');
+const {googleVerify} = require('../helpers/google-verify');
 
 
 const login= async(req, res = response)=>{
@@ -12,7 +12,7 @@ const login= async(req, res = response)=>{
     try{
 
         
-        const userDB = await Usuario.findOne({email, status: {$in:[0,1]}}, '_id email password nombre');
+        const userDB = await contextUsuario.findOne({email, status: {$in:[0,1]}}, '_id email password nombre');
 
         if(!userDB){
             return res.status(404).json({
@@ -47,6 +47,53 @@ const login= async(req, res = response)=>{
     }
 }
 
+const googleSingIn = async(req, res = response) =>{
+
+    try{
+
+
+        const { email, family_name, given_name, picture}  = await googleVerify(req.body.token);
+        
+        const usuariosDB = await contextUsuario.findOne({status: {$in:[0,1]}, email});
+
+        let usuario;
+
+        if (!usuariosDB) {
+            usuario = new contextUsuario({
+                nombre: `${given_name} ${family_name}`,
+                email,
+                img: picture,
+                password: '@@',
+                google: true
+            });
+        } else {
+            usuario = usuariosDB;
+            usuario.google = true;
+        }
+
+        // Guardar Usuario
+        await usuario.save();
+
+        // Generar Token - JWT
+        const token = await generarJWT(usuario._id,usuario.nombre);
+        
+        res.json({
+            ok: true,
+            msg: 'sing-in Google',
+            usuario,
+            token
+        });
+        
+    }catch(error){
+        console.log(error);
+        res.status(500).json({
+            ok: false,
+            msg: 'Token de google no es correcto'
+        });
+    }
+}
+
 module.exports = {
-    login
+    login,
+    googleSingIn
 }
