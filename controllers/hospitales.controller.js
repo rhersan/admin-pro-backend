@@ -60,17 +60,76 @@ const crearHospital = async(req, res = response)=>{
 
 
 const actualizarHospital = async(req,res = response)=> {
-    res.json({
-        ok: true,
-        msg: 'actualizarHospital'
-    });
+
+    try{
+        const uid = req.uid;
+        const idHospita = req.params.id;
+
+        const hospitalDB = await contextHospital.findOne({status: {$in:[0,1]}, _id: idHospita});
+        if(!hospitalDB){
+            return res.status(404).json({
+                ok: false,
+                msg: 'No hay algun hospital con el id'
+            });
+        }
+        const cambiosHospitales = {
+            ... req.body,
+            usuario: uid
+        }
+        
+        const HospitalActualizado = await contextHospital.findByIdAndUpdate({_id: idHospita},cambiosHospitales, {new: true});
+
+        res.json({
+            ok: true,
+            msg: 'actualizarHospital',
+            idHospita,
+            hospital: HospitalActualizado
+        });
+
+    }catch(error){
+        console.log(error);
+
+        res.status(500).json({
+            ok: false,
+            msg: 'Consulte el Administrador'
+        });
+    }
 }
 
 const eliminarHospital = async(req,res = response)=> {
-    res.json({
-        ok: true,
-        msg: 'eliminarHospital'
-    });
+
+    try{
+        const uid = req.uid;
+        const idHospita = req.params.id;
+
+        const hospitalDB = await contextHospital.findOne({status: {$in:[0,1]}, _id: idHospita});
+        if(!hospitalDB){
+            return res.status(404).json({
+                ok: false,
+                msg: 'No hay algun hospital con el id'
+            });
+        }
+
+        const cambiosHospitales = {
+            usuario: uid,
+            status: 5
+        }
+
+        const HospitalActualizado = await contextHospital.findByIdAndUpdate({_id: idHospita},cambiosHospitales, {new: true});
+
+        res.json({
+            ok: true,
+            msg: 'Registro eliminado correctamente',
+            hospital: HospitalActualizado
+        });
+
+    }catch(error){
+        console.log(error);
+        res.status(500).json({
+            ok: false,
+            msg: 'Consulte el Adminstrador'
+        });
+    }
 }
 
 module.exports = {
