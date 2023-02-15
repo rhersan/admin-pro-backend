@@ -6,7 +6,7 @@ const {login, googleSingIn, renewToken} = require('../controllers/auth.controlle
 
 const router = Router();
 
-router.get('/',[
+router.post('/',[
         check('email', 'El email es obligatorio').isEmail(),
         check('password', 'El password es obligatorio').not().isEmpty(),
         validarCampos
