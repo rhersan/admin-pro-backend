@@ -133,10 +133,20 @@ const actualizarUsuario = async(req, res = response) => {
 const eliminarUsuario = async(req, res = response)=>{
     try{
         const uid = req.params.id;
+        const uidSesion = req.uid;
+
+        if(uid ==  uidSesion){
+            return res.status(404).json({
+                ok: false,
+                msg: 'No puede eliminarse a si mismo.'
+            });
+        }
+
+
         const existUsuario = await Usuario.findOne({_id:uid,  status: {$in:[0,1]} });
         if( !existUsuario ){
             return res.status(404).json({
-                ok: true,
+                ok: false,
                 msg: 'No existe algun usuario con el id'
             });
         }
