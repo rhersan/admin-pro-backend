@@ -11,31 +11,33 @@ const {
     listadoMedicos,
     crearMedicos,
     actualizarMedicos,
-    eliminarMedicos
+    eliminarMedicos,
+    medicoPorId
 } = require('../controllers/medicos.controller');
 
 const router =  Router();
 
 
 router.get('/',validarJWT, listadoMedicos);
+router.get('/:id',validarJWT, medicoPorId);
 
 router.post('/',[
         validarJWT,
         check('nombre','El nombre es obligatorio').not().notEmpty(),
-        check('img', 'La imagen es obligatorio').not().notEmpty(),
-        check('idHospital','El hospital id debe ser válido').isMongoId(),
+        check('hospital','El hospital id debe ser válido').isMongoId(),
         validarCampos
     ], crearMedicos);
 
 router.put('/:id',[
         validarJWT,
         check('nombre','El nombre es obligatorio').not().notEmpty(),
-        check('idHospital','El hospital id debe ser válido').isMongoId(),
+        check('hospital','El hospital id debe ser válido').isMongoId(),
         validarCampos
     ], actualizarMedicos);
 
 
     
 router.delete('/:id',validarJWT, eliminarMedicos);
+
 
 module.exports = router;

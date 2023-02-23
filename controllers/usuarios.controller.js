@@ -155,7 +155,7 @@ const eliminarUsuario = async(req, res = response)=>{
         console.log(resp);
         res.json({
             ok: true,
-            msg: 'Eliminado correctamente, id: '+uid
+            msg: 'Registro eliminado correctamente!'
         });
 
     }catch(error){

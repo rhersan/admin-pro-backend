@@ -2,12 +2,20 @@ const {response} = require('express');
 const contextHospital    = require('../models/hospital.model');
 
 const listaHospitales = async(req, res= response) => {
+
+    const desde = Number(req.query.desde) || 0;
     try{
 
-        const hospitales = await contextHospital.find({ status: {$in:[0,1]} })
-                                .populate('usuario','nombre');
+            // cuando hay mas de 1 await 
+        const [hospitales, total] =  await Promise.all([
+            contextHospital.find({ status: {$in:[0,1]} }, 'usuario nombre img status')
+            .skip(desde)
+            .limit(5),
+            contextHospital.countDocuments({status: {$in:[0,1]}})
+        ]);
         return res.json({
             ok: true,
+            total,
             hospitales
         });
     }catch(error){
@@ -20,6 +28,22 @@ const listaHospitales = async(req, res= response) => {
     }
 }
 
+const hospitales = async (req, res = response) =>{
+    try {
+        const hospitales = await contextHospital.find({ status: { $in: [0, 1] } }, 'nombre img');
+        return res.json({
+            ok: true,
+            hospitales
+        });
+    } catch (error) {
+        console.log(error);
+        res.status(404).json({
+            ok: false,
+            msg: 'Error inesperado'
+        });
+
+    }
+}
 
 const crearHospital = async(req, res = response)=>{
     const uid = req.uid;
@@ -45,7 +69,7 @@ const crearHospital = async(req, res = response)=>{
 
         res.json({
             ok: true,
-            hospitalDB
+            hospital: hospitalDB
         });
 
     }catch(error){
@@ -63,9 +87,9 @@ const actualizarHospital = async(req,res = response)=> {
 
     try{
         const uid = req.uid;
-        const idHospita = req.params.id;
+        const idHospital = req.params.id;
 
-        const hospitalDB = await contextHospital.findOne({status: {$in:[0,1]}, _id: idHospita});
+        const hospitalDB = await contextHospital.findOne({status: {$in:[0,1]}, _id: idHospital});
         if(!hospitalDB){
             return res.status(404).json({
                 ok: false,
@@ -77,12 +101,12 @@ const actualizarHospital = async(req,res = response)=> {
             usuario: uid
         }
         
-        const HospitalActualizado = await contextHospital.findByIdAndUpdate({_id: idHospita},cambiosHospitales, {new: true});
+        const HospitalActualizado = await contextHospital.findByIdAndUpdate({_id: idHospital},cambiosHospitales, {new: true});
 
         res.json({
             ok: true,
             msg: 'actualizarHospital',
-            idHospita,
+            idHospital,
             hospital: HospitalActualizado
         });
 
@@ -119,7 +143,7 @@ const eliminarHospital = async(req,res = response)=> {
 
         res.json({
             ok: true,
-            msg: 'Registro eliminado correctamente',
+            msg: 'Registro eliminado correctamente!',
             hospital: HospitalActualizado
         });
 
@@ -134,6 +158,7 @@ const eliminarHospital = async(req,res = response)=> {
 
 module.exports = {
     listaHospitales,
+    hospitales,
     crearHospital,
     actualizarHospital,
     eliminarHospital
