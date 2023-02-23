@@ -1,10 +1,11 @@
 const {response} = require('express');
 const contextoMedico = require('../models/medico.model');
 const contexHospital = require('../models/hospital.model');
+const { borrarImagen } = require('../helpers/actualizar-imagen');
 
 
 const listadoMedicos = async(req, res = response) => {
-    const desde = req.params.desde
+    const desde = Number(req.query.desde) || 0;
     try{
         const [medicos,total] = await Promise.all([
             contextoMedico.find({status: {$in:[0,1]}})
@@ -159,6 +160,11 @@ const eliminarMedicos = async(req, res = response) => {
             status: 5
             }
         const medicoActualizado = await contextoMedico.findByIdAndUpdate( {_id: idMedico }, cambiosMedico, {new: true});
+        // Eliminar foto
+        if(medicoDB.img && !medicoDB.img.includes('https')){
+            const path = `./uploads/medicos/${medicoDB.img}`;
+            await borrarImagen(path);
+        }
 
         return res.json({
             ok: true,

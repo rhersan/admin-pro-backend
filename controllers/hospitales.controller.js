@@ -2,7 +2,6 @@ const {response} = require('express');
 const contextHospital    = require('../models/hospital.model');
 
 const listaHospitales = async(req, res= response) => {
-
     const desde = Number(req.query.desde) || 0;
     try{
 

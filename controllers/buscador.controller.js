@@ -56,7 +56,7 @@ const buscadorPorColeccion = async (req, res = response) => {
             case "medicos":
                 dataResult = await contextMedico.find({ status: { $in: [0, 1] }, nombre: regex })
                                                  .populate('usuario', 'nombre')
-                                                 .populate('idHospital', 'nombre img');
+                                                 .populate('hospital', 'nombre img');
                 break;
             case "usuarios":
                 dataResult = await contextUsuario.find({ status: { $in: [0, 1] }, nombre: regex })

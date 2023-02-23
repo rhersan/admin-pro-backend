@@ -62,7 +62,6 @@ const fileUpload = async(req, res = response) => {
             // actualizar base de datos
             var resp = await actualizarImagen(tipo,id,fileName);
             if (!resp) {
-                console.log(false);
                 await borrarImagen(path);
                 return res.status(404).json({
                     ok: false,
@@ -107,7 +106,6 @@ const getImagen = async (req, res = response)=>{
             res.sendFile(pathImg);
         }else{            
             const noimage= _path.join(__dirname,'../assets/img/noimage.png');
-            console.log(noimage);
             res.sendFile(noimage);
         }
         
