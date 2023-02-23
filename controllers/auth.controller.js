@@ -3,6 +3,7 @@ const bcrypt = require('bcryptjs');
 const contextUsuario = require('../models/usuario.model');
 const {generarJWT} =  require('../helpers/jwt');
 const {googleVerify} = require('../helpers/google-verify');
+const { getMenuFrondEnd } = require('../helpers/menu-forntend');
 
 
 const login= async(req, res = response)=>{
@@ -12,7 +13,7 @@ const login= async(req, res = response)=>{
     try{
 
         
-        const userDB = await contextUsuario.findOne({email, status: {$in:[0,1]}}, '_id email password nombre');
+        const userDB = await contextUsuario.findOne({email, status: {$in:[0,1]}}, '_id email password nombre role');
 
         if(!userDB){
             return res.status(404).json({
@@ -35,7 +36,8 @@ const login= async(req, res = response)=>{
 
         res.json({
             ok: true,
-            token
+            token,
+            menu: getMenuFrondEnd(userDB.role)
         });
 
     }catch(error){
@@ -81,7 +83,8 @@ const googleSingIn = async(req, res = response) =>{
             ok: true,
             msg: 'sing-in Google',
             usuario,
-            token
+            token,
+            menu: getMenuFrondEnd(usuario.role)
         });
         
     }catch(error){
@@ -106,7 +109,8 @@ const renewToken = async(req, res = response) => {
         res.json({
             ok: true,
             usuario: usuarioDB,
-            token
+            token,
+            menu: getMenuFrondEnd(usuarioDB.role)
         });
 
     }catch(error){
